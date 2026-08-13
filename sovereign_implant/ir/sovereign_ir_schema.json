@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "SOVEREIGN-IR-1",
+  "title": "Sovereign IR v1",
+  "description": "Typed output IR for the Sovereign Model Implant. ModelOutput != TrustedOutput. Only Verify(IR) = TRUE promotes to VERIFIED.",
+  "type": "object",
+  "required": ["version", "claim_type", "statement", "assumptions", "complexity", "verification_status"],
+  "properties": {
+    "version": {
+      "const": "SOVEREIGN-IR-1"
+    },
+    "claim_type": {
+      "enum": ["candidate", "theorem", "observation", "conjecture", "unknown"]
+    },
+    "statement": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "derivation": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "invariants": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "complexity": {
+      "type": "object",
+      "properties": {
+        "complexity_class": {
+          "type": "string",
+          "description": "P, NP, PSPACE, UNKNOWN, etc. UNKNOWN unless machine-checked proof supplied."
+        },
+        "proof_status": {
+          "enum": ["PROVED", "UNPROVED", "REFUTED", "UNKNOWN"],
+          "default": "UNPROVED"
+        },
+        "reduction": {
+          "type": ["string", "null"],
+          "description": "Required if claiming NP-hardness. Must be an explicit polynomial reduction."
+        }
+      }
+    },
+    "cryptography": {
+      "type": "object",
+      "properties": {
+        "claim": { "type": ["string", "null"] },
+        "certificate": {
+          "type": ["string", "null"],
+          "description": "Required for BROKEN or KEY_RECOVERED claims."
+        },
+        "security_model": {
+          "type": ["string", "null"],
+          "description": "Required for SECURE claims."
+        }
+      }
+    },
+    "quantum": {
+      "type": "object",
+      "properties": {
+        "claim": { "type": ["string", "null"] },
+        "is_simulation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Always true unless physical quantum hardware is confirmed."
+        },
+        "area_blind": {
+          "type": "boolean",
+          "default": true,
+          "description": "Must be true. A/(4*lP^2) must not appear in the derivation."
+        }
+      }
+    },
+    "verification_status": {
+      "enum": ["PENDING", "VERIFIED", "REJECTED", "INCOMPLETE"],
+      "description": "Only the external verifier may set VERIFIED."
+    }
+  }
+}
