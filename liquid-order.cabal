@@ -1,12 +1,13 @@
 cabal-version: 3.0
 name:          liquid-order
-version:       0.1.0
-synopsis:      LCF-style higher-order refinement engine where subtyping is predicate ordering
+version:       0.2.0
+synopsis:      LCF-style higher-order refinement engine — Sovereign-Covenant verification
 description:
-  LiquidOrder is a higher-order refinement calculus whose organizing mathematical structure
-  is order, not satisfiability. Refinement subtyping is predicate ordering, recursion is
-  fixed-point reasoning, automation is proof-producing, and SMT is an optional subordinate
-  decision procedure.
+  LiquidOrder is a higher-order refinement calculus integrated with the Sovereign-Covenant
+  preregistered research protocol. Subtyping is predicate ordering. Recursion is fixed-point
+  reasoning. Automation is proof-producing through an untrusted solver. A proposition is
+  VERIFIED only when the trusted LCF kernel successfully reconstructs its derivation from
+  a ProofCertificate. HOL is a logical expressivity framework — it is NOT a complexity class.
 category:      Formal Methods
 license:       MIT
 author:        Jessica
@@ -20,11 +21,39 @@ library
   import:             defaults
   hs-source-dirs:     src
   exposed-modules:
+    -- Trusted kernel (Thm constructor unexported)
     LiquidOrder.Kernel.Kernel
+    LiquidOrder.Kernel.Certificate
+
+    -- IR and type system
     LiquidOrder.IR.Types
+
+    -- Epistemic type system
+    LiquidOrder.Epistemic.Types
+
+    -- Order theory and refinement
     LiquidOrder.Order.OrderTheory
     LiquidOrder.Refinement.Subtyping
     LiquidOrder.Refinement.FactorsThrough
+
+    -- Automation (untrusted; produces certificates for kernel)
     LiquidOrder.Automation.Dispatch
+
+    -- Sovereign-Covenant HOL formalization
+    LiquidOrder.SovereignCovenant.HOLFormalization
+    LiquidOrder.SovereignCovenant.Obligations
+
+    -- Manifest
+    LiquidOrder.Manifest.Manifest
+
+    -- Pipeline
+    LiquidOrder.Pipeline.Pipeline
+
+    -- Track 3 isolation
+    LiquidOrder.Track3.Omega
+
   build-depends:
-      base >= 4.14
+      base   >= 4.14
+    , bytestring
+    , containers
+    , word8

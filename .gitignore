@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+dist-newstyle/
+.stack-work/
+*.hi
+*.o
+manifest_v2.json
+manifest_v1.json
+corpus/canonicalization_results.json
