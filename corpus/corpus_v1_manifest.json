@@ -1,0 +1,72 @@
+{
+  "_comment": "Frozen corpus manifest v1. Algorithms listed by family. Full algorithm records to be added before blind execution.",
+  "_freeze_status": "MANIFEST_FROZEN — algorithm records pending",
+  "_target_size": 137,
+  "_commit_binding": "Spec_v1_frozen",
+  "_2462_note": "2462 does NOT appear anywhere in this file. Track 3 is blind and post-execution.",
+  "families": [
+    {
+      "family": "SymmetricCipher",
+      "algorithms": ["AES-128-CBC", "AES-256-GCM", "ChaCha20-Poly1305", "3DES-CBC", "Blowfish-128"]
+    },
+    {
+      "family": "AsymmetricKeyExchange",
+      "algorithms": ["DH-2048", "DH-4096", "ECDH-P256", "ECDH-P384", "X25519", "X448"]
+    },
+    {
+      "family": "PublicKeyEncryption",
+      "algorithms": ["RSA-2048-OAEP", "RSA-4096-OAEP", "ElGamal-2048"]
+    },
+    {
+      "family": "DigitalSignature",
+      "algorithms": ["ECDSA-P256", "ECDSA-P384", "Ed25519", "Ed448", "RSA-PSS-2048", "RSA-PSS-4096", "DSA-2048"]
+    },
+    {
+      "family": "HashFunction",
+      "algorithms": ["SHA-256", "SHA-512", "SHA3-256", "SHA3-512", "BLAKE2b", "BLAKE3"]
+    },
+    {
+      "family": "MAC",
+      "algorithms": ["HMAC-SHA256", "HMAC-SHA512", "Poly1305", "CMAC-AES"]
+    },
+    {
+      "family": "KeyDerivation",
+      "algorithms": ["HKDF-SHA256", "PBKDF2-SHA256", "Argon2id", "scrypt", "bcrypt"]
+    },
+    {
+      "family": "SortingAlgorithm",
+      "algorithms": ["MergeSort", "QuickSort", "HeapSort", "TimSort", "RadixSort", "CountingSort"]
+    },
+    {
+      "family": "SearchAlgorithm",
+      "algorithms": ["BinarySearch", "BFS", "DFS", "Dijkstra", "BellmanFord", "AStar"]
+    },
+    {
+      "family": "TreeAlgorithm",
+      "algorithms": ["AVLInsert", "RedBlackInsert", "BTreeInsert", "BalancedMerge"]
+    },
+    {
+      "family": "DynamicProgramming",
+      "algorithms": ["LongestCommonSubsequence", "EditDistance", "KnapsackDP", "MatrixChainMultiplication", "CoinChange"]
+    },
+    {
+      "family": "GraphAlgorithm",
+      "algorithms": ["TopologicalSort", "TarjanSCC", "KruskalMST", "PrimMST", "FloydWarshall"]
+    },
+    {
+      "family": "StringAlgorithm",
+      "algorithms": ["KMP", "BoyerMoore", "RabinKarp", "AhoCorasick", "SuffixArray"]
+    },
+    {
+      "family": "NumericalAlgorithm",
+      "algorithms": ["GaussianElimination", "LUDecomposition", "QRDecomposition", "ConjugateGradient", "NewtonMethod"]
+    },
+    {
+      "family": "ZeroKnowledgeProof",
+      "algorithms": ["SNARK-Groth16", "STARK-FRI", "Schnorr-ZK", "BulletproofRange", "PlonkProver"]
+    }
+  ],
+  "total_families": 15,
+  "total_algorithms_listed": 83,
+  "_note": "Expand to 137 before blind execution. Remaining 54 slots: add from lattice crypto, MPC, FHE, streaming algorithms, online algorithms, randomized algorithms families."
+}

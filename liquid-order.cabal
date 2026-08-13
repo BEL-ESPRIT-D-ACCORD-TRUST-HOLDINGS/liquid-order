@@ -1,0 +1,30 @@
+cabal-version: 3.0
+name:          liquid-order
+version:       0.1.0
+synopsis:      LCF-style higher-order refinement engine where subtyping is predicate ordering
+description:
+  LiquidOrder is a higher-order refinement calculus whose organizing mathematical structure
+  is order, not satisfiability. Refinement subtyping is predicate ordering, recursion is
+  fixed-point reasoning, automation is proof-producing, and SMT is an optional subordinate
+  decision procedure.
+category:      Formal Methods
+license:       MIT
+author:        Jessica
+maintainer:    jessicalw34@gmail.com
+
+common defaults
+  ghc-options:        -Wall -Wcompat
+  default-language:   Haskell2010
+
+library
+  import:             defaults
+  hs-source-dirs:     src
+  exposed-modules:
+    LiquidOrder.Kernel.Kernel
+    LiquidOrder.IR.Types
+    LiquidOrder.Order.OrderTheory
+    LiquidOrder.Refinement.Subtyping
+    LiquidOrder.Refinement.FactorsThrough
+    LiquidOrder.Automation.Dispatch
+  build-depends:
+      base >= 4.14
