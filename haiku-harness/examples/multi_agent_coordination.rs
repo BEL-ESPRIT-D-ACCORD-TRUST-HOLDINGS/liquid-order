@@ -8,7 +8,7 @@ use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let harness = HaikuHarness::new(".".to_string());
+    let harness = HaikuHarness::new(".".to_string()).await;
 
     let stages = [
         ("Decompose task into verification subtasks", ApiVersion::V3),

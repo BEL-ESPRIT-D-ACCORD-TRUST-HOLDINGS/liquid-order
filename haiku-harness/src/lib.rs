@@ -4,9 +4,11 @@
 // Provenance: SnapKitty Sovereign Systems
 
 pub mod advanced_kernel;
+pub mod bedrock;
 
 use advanced_kernel::{AdvancedHaikuKernel, AgentId, Decision, DecisionType, KillSwitchLevel};
 use anyhow::{anyhow, Result};
+use aws_sdk_bedrockruntime::Client as BedrockClient;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -246,41 +248,53 @@ pub struct HaikuHarness {
     pub validator: ConstraintValidator,
     pub sandbox: ToolSandbox,
     pub provenance: GitProvenance,
+    pub bedrock: BedrockClient,
 }
 
 impl HaikuHarness {
-    pub fn new(git_repo: String) -> Self {
+    pub async fn new(git_repo: String) -> Self {
+        let bedrock = bedrock::build_client().await;
         HaikuHarness {
             kernel: AdvancedHaikuKernel::new(),
             validator: ConstraintValidator,
             sandbox: ToolSandbox { git_repo: git_repo.clone() },
             provenance: GitProvenance { repo_path: git_repo },
+            bedrock,
         }
     }
 
     pub async fn dispatch(&self, msg: XmlMessage) -> Result<XmlResponse> {
-        // 1. XML schema validation + constraint check (HALT on violation)
+        // 1. Validate constraints (HALT on violation — no silent degradation)
         self.validator.validate(&msg)?;
 
-        // 2. Route to agent based on kernel adaptive memory
+        // 2. Route via kernel adaptive memory
         let agent_id = self.route(&msg);
 
-        // 3. Tool execution (if requested)
+        // 3. Tool execution (sandbox-enforced allowlist)
         let tool_output = if let Some(ref tr) = msg.tool_request {
             self.sandbox.execute(tr)?
         } else {
             String::new()
         };
 
-        // 4. Model invocation (stub — replace with real Anthropic SDK call)
-        let model_output = format!(
-            "[{}] processed: {} | tool_output: {}",
-            format!("{:?}", agent_id),
-            &msg.payload.instruction.directive[..msg.payload.instruction.directive.len().min(60)],
-            if tool_output.is_empty() { "none".into() } else { tool_output[..tool_output.len().min(40)].to_string() }
-        );
+        // 4. Build user message: directive + tool output if any
+        let user_message = if tool_output.is_empty() {
+            msg.payload.instruction.directive.clone()
+        } else {
+            format!(
+                "{}\n\nTool output:\n{}",
+                msg.payload.instruction.directive, tool_output
+            )
+        };
 
-        // 5. Record decision + update adaptive memory
+        // 5. Bedrock invocation — every agent is Claude Haiku
+        //    Sovereign implant system prompt enforces UNTRUSTED_GENERATOR role
+        let system_prompt = include_str!("../../sovereign_implant/prompt/system_prompt.md");
+        let br = bedrock::invoke(&self.bedrock, agent_id, system_prompt, &user_message).await?;
+        let model_output = br.text;
+        let tokens_used = br.input_tokens + br.output_tokens;
+
+        // 6. Record decision + update adaptive memory
         let decision = Decision {
             id: msg.header.message_id.clone(),
             decision_type: DecisionType::Routing,
@@ -289,13 +303,13 @@ impl HaikuHarness {
             input: msg.payload.instruction.directive.clone(),
             output: model_output.clone(),
             success: true,
-            latency_ms: 300,
-            tokens_used: 500,
+            latency_ms: 300,    // TODO: measure wall time around invoke()
+            tokens_used,
             causality_order: 0,
         };
         self.kernel.record_decision(decision)?;
 
-        // 6. Git provenance commit
+        // 7. Git provenance commit
         let commit_msg = format!(
             "[AGENT:{:?}] Task: {} | Status: success",
             agent_id,
