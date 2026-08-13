@@ -55,6 +55,12 @@ library
     -- Quantum / invariant layer (Ahmad's Dreamcycles runtime checks)
     LiquidOrder.Quantum.VerificationBridge
 
+    -- Quantum Language B (Macrobit-Shard Hypothesis formalization)
+    LiquidOrder.QuantumLangB.Types
+    LiquidOrder.QuantumLangB.HOLFormalization
+    LiquidOrder.QuantumLangB.Obligations
+    LiquidOrder.QuantumLangB.Pipeline
+
   -- DreamcyclesInvariant.hs is a standalone Main executable, not a library module.
   -- Build it separately: ghc -O2 src/LiquidOrder/Quantum/DreamcyclesInvariant.hs -o dreamcycles
 
