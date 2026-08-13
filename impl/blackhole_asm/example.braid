@@ -1,0 +1,47 @@
+; QBH-ASM / BraidASM v0.1
+; Reference program: single-horizon, two-macrobit, two-shard
+; Area-blind. IBM hardware internals not required.
+; Source language: OpenQASM 3 (public spec)
+
+.module blackhole_shard
+
+ALLOC q0
+ALLOC q1
+ALLOC q2
+
+H q0
+CX q0, q1
+
+BRAID q0, q1
+BRAID q1, q2
+
+SHARD s0, q0, q1
+SHARD s1, q2
+
+MIGRATE q1, s0 -> s1
+
+RZ q2, 1.57079632679
+
+SCRAMBLE q0, q1, q2
+
+MEASURE q0 -> c0
+MEASURE q1 -> c1
+
+SEAL s0
+SEAL s1
+
+BARRIER
+
+UNBRAID q1, q2
+UNBRAID q0, q1
+
+RELEASE q0
+RELEASE q1
+RELEASE q2
+
+; Area-blind report emitted at runtime:
+; HORIZON_AREA      = A  (from HORIZON declaration)
+; ADMISSIBLE_STATES = N  (counted from physical constraints)
+; ENTROPY           = log(N)
+; AREA_RATIO        = log(N) / A
+; Target 1/(4*lP^2) NOT embedded here. Convergence is the finding.

@@ -61,6 +61,10 @@ library
     LiquidOrder.QuantumLangB.Obligations
     LiquidOrder.QuantumLangB.Pipeline
 
+    -- BlackHoleASM IR and opcode set
+    LiquidOrder.QuantumLangB.BlackHoleASM.IR
+    LiquidOrder.QuantumLangB.BlackHoleASM.Opcodes
+
   -- DreamcyclesInvariant.hs is a standalone Main executable, not a library module.
   -- Build it separately: ghc -O2 src/LiquidOrder/Quantum/DreamcyclesInvariant.hs -o dreamcycles
 
