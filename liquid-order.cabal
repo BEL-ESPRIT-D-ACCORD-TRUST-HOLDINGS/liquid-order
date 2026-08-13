@@ -52,6 +52,12 @@ library
     -- Track 3 isolation
     LiquidOrder.Track3.Omega
 
+    -- Quantum / invariant layer (Ahmad's Dreamcycles runtime checks)
+    LiquidOrder.Quantum.VerificationBridge
+
+  -- DreamcyclesInvariant.hs is a standalone Main executable, not a library module.
+  -- Build it separately: ghc -O2 src/LiquidOrder/Quantum/DreamcyclesInvariant.hs -o dreamcycles
+
   build-depends:
       base   >= 4.14
     , bytestring
