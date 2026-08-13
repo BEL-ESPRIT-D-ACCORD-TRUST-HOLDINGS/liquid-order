@@ -65,6 +65,11 @@ library
     LiquidOrder.QuantumLangB.BlackHoleASM.IR
     LiquidOrder.QuantumLangB.BlackHoleASM.Opcodes
 
+    -- Haiku Learning Kernel (Curry/Haskell spec)
+    LiquidOrder.HaikuKernel.WorldState
+    LiquidOrder.HaikuKernel.Pipeline
+    LiquidOrder.HaikuKernel.KillSwitch
+
   -- DreamcyclesInvariant.hs is a standalone Main executable, not a library module.
   -- Build it separately: ghc -O2 src/LiquidOrder/Quantum/DreamcyclesInvariant.hs -o dreamcycles
 
