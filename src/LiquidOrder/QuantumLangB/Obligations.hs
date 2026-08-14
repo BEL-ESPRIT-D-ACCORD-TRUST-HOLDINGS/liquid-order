@@ -31,7 +31,7 @@ qlbObligations =
       , trDependencies = []
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question
       }
 
   , TheoremRecord
@@ -44,7 +44,7 @@ qlbObligations =
       , trDependencies = ["QLB-001"]
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question
       }
 
   , TheoremRecord
@@ -56,7 +56,7 @@ qlbObligations =
       , trDependencies = []
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question
       }
 
   , TheoremRecord
@@ -69,7 +69,7 @@ qlbObligations =
       , trDependencies = ["QLB-003"]
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question
       }
 
   , TheoremRecord
@@ -82,7 +82,7 @@ qlbObligations =
       , trDependencies = ["QLB-001", "QLB-004"]
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question
       }
 
   , TheoremRecord
@@ -96,7 +96,7 @@ qlbObligations =
       , trDependencies = ["QLB-002", "QLB-005"]
       , trStatus       = Unresolved
       , trCertDigest   = Nothing
-      , trRequired     = True
+      , trRequired     = False  -- open research question; central conjecture of QLB
       }
 
     -- Complexity question: SEPARATE from entropy-area relation

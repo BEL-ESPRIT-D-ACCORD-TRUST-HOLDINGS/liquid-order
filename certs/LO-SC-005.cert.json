@@ -1,0 +1,18 @@
+{
+  "theorem_id": "LO-SC-005",
+  "proposition": "N(A)=N(B) -> F(N(A))=F(N(B))",
+  "proof_method": "Agda_congruence",
+  "proof_file": "proofs/Agda/NormalizationAbsorption.agda",
+  "proof_term": "featureDeterminism",
+  "status": "PROVED",
+  "assumptions": [],
+  "dependencies": ["LO-SC-004"],
+  "proof_summary": "Proved by congruence: featureDeterminism uses cong F applied to the hypothesis N(A) = N(B). Since F is a function, equal inputs produce equal outputs. This is the determinism of feature extraction from the normal form.",
+  "agda_theorem": "featureDeterminism",
+  "agda_module": "NormalizationAbsorption",
+  "sorry_count": 0,
+  "holes_count": 0,
+  "verification_date": "2026-08-13",
+  "verifier": "Agda type checker",
+  "cert_hash_sha3_256": "placeholder_replace_with_actual_blake3_on_blind_execution"
+}

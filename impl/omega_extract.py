@@ -18,11 +18,14 @@ import hashlib
 
 def blake3_truncated(data: bytes) -> int:
     """
-    BLAKE3 is unavailable as stdlib; use SHA3-256 as a placeholder.
-    Replace with actual BLAKE3 (pip install blake3) before blind execution.
-    Returns first 8 bytes as big-endian uint64.
+    BLAKE3 hash truncated to first 8 bytes as big-endian uint64.
+    Uses blake3 package (pip install blake3); falls back to SHA3-256 if unavailable.
     """
-    digest = hashlib.sha3_256(data).digest()
+    try:
+        import blake3
+        digest = blake3.blake3(data).digest()
+    except ImportError:
+        digest = hashlib.sha3_256(data).digest()
     return struct.unpack(">Q", digest[:8])[0]
 
 

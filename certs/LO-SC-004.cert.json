@@ -1,0 +1,22 @@
+{
+  "theorem_id": "LO-SC-004",
+  "proposition": "EquivalenceRelation(EquivalentN)",
+  "proof_method": "Agda_direct",
+  "proof_file": "proofs/Agda/NormalizationAbsorption.agda",
+  "proof_terms": ["reflexive-N", "symmetric-N", "transitive-N"],
+  "status": "PROVED",
+  "assumptions": [],
+  "dependencies": ["LO-SC-003"],
+  "proof_summary": "Three components proved directly in Agda. Reflexivity: refl. Symmetry: sym. Transitivity: trans. All three use the standard library combinators applied to the normal-form equality N(A) = N(B).",
+  "agda_theorems": [
+    "reflexive-N",
+    "symmetric-N",
+    "transitive-N"
+  ],
+  "agda_module": "NormalizationAbsorption",
+  "sorry_count": 0,
+  "holes_count": 0,
+  "verification_date": "2026-08-13",
+  "verifier": "Agda type checker",
+  "cert_hash_sha3_256": "placeholder_replace_with_actual_blake3_on_blind_execution"
+}

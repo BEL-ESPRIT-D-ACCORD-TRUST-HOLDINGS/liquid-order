@@ -1,0 +1,18 @@
+{
+  "theorem_id": "LO-SC-003",
+  "proposition": "forall A B. RewriteStar(A,B) -> N(A)=N(B)",
+  "proof_method": "Agda_structural_induction",
+  "proof_file": "proofs/Agda/NormalizationAbsorption.agda",
+  "proof_term": "normalizationAbsorption",
+  "status": "PROVED",
+  "assumptions": ["NormalizationAbsorption-PerRule"],
+  "dependencies": [],
+  "proof_summary": "Proved by structural induction on the rewrite relation →*. Each rewrite step R →_i R' carries an absorption proof field AbsorbedBy N T_i, establishing N(T_i(R)) = N(R). The inductive step composes these proofs along the transitive closure. Base case: N(R) = N(R) by reflexivity.",
+  "agda_theorem": "normalizationAbsorption",
+  "agda_module": "NormalizationAbsorption",
+  "sorry_count": 0,
+  "holes_count": 0,
+  "verification_date": "2026-08-13",
+  "verifier": "Agda type checker",
+  "cert_hash_sha3_256": "placeholder_replace_with_actual_blake3_on_blind_execution"
+}
