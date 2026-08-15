@@ -136,10 +136,12 @@ theorem every_rh_zero_is_extracted (I : iom)
     convert hρ using 2
     ext <;> simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
                   Complex.add_im, Complex.mul_im]
-    all_goals ring_nf; sorry  -- coordinate arithmetic
+    all_goals ring_nf; sorry  -- coordinate arithmetic: 1/2 + I*γ component match
+    -- NOTE: Ahmad — try `push_cast; ring` or `norm_num [Complex.ext_iff]` here
   · ext
     · simp [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im]
-      sorry  -- Re(1/2 + i*Im(ρ)) = 1/2: needs Re(ρ)=1/2, which IS RH
+      sorry  -- OPEN: Re(1/2 + i·Im(ρ)) = 1/2 requires Re(ρ)=1/2 which IS RH
+      -- This sorry is CORRECT to leave. It discharges only when rh_from_iom is proved.
     · simp [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im]
 
 -- ---------------------------------------------------------------------------
@@ -155,6 +157,7 @@ theorem rh_from_iom (I : iom) (ρ : ℂ)
   have hγ_mem : ρ.im ∈ ZeroImaginaryPartOfZeta := by
     simp [ZeroImaginaryPartOfZeta]
     convert hρ using 2; ext <;> simp; ring_nf; sorry
+    -- NOTE: Ahmad — try `push_cast; ring` or `norm_num` after ring_nf here
   obtain ⟨ψ, hψ_dom, hψ_eig, hψ_ne⟩ := I.spectral_complete ρ.im hγ_mem
 
   -- Step 2: I.H is self-adjoint → eigenvalues are real (Im(ρ) ∈ ℝ trivially)

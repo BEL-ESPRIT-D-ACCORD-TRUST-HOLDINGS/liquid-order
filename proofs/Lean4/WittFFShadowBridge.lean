@@ -156,7 +156,7 @@ theorem rh_from_shadow_laplacian
   obtain ⟨γ, hγ⟩ : ∃ γ : ℝ, s = 1/2 + Complex.I * γ := by
     have := (prime_braid_spectrum_matches_zeros (s.im)).mpr (by
       convert hs using 1; simp [Complex.ext_iff]; constructor
-      · simp; ring_nf; sorry
+      · simp; ring_nf; sorry  -- coordinate: Re(1/2 + I*Im(s)) = Re(s); try push_cast; ring
       · simp)
     exact ⟨s.im, by ext <;> simp [hγ]⟩
   -- Step 2: Re(1/2 + iγ) = 1/2

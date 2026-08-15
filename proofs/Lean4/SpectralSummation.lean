@@ -89,7 +89,11 @@ noncomputable def cutoffSum (spec : SumSpec blocks) (R : ℝ) (F : ℝ → ℝ) 
 theorem cutoffSum_mono (spec : SumSpec blocks) (R₁ R₂ : ℝ) (hR : R₁ ≤ R₂)
     (F : ℝ → ℝ) (hF : ∀ x, 0 ≤ F x) :
     cutoffSum spec R₁ F ≤ cutoffSum spec R₂ F := by
-  sorry  -- proof: the domain {|λ| ≤ R₁} ⊆ {|λ| ≤ R₂}
+  apply tsum_le_tsum_of_injOn
+  · intro ⟨λ, hλ_dom, hλ_R₁⟩
+    exact ⟨hλ_dom, le_trans hλ_R₁ (by linarith)⟩
+  · intro ⟨λ, _⟩; positivity
+  · exact (limitSum_exists spec F).mono (fun ⟨λ, hλ_dom, _⟩ => hλ_dom)
 
 -- ---------------------------------------------------------------------------
 -- LimitSum: the infinite spectral sum (only when convergence is proved)
