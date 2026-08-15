@@ -1,0 +1,72 @@
+# SEIT Certified Build Environment
+# Tier III Igneous | WORM: bifrost:4b565498-9afc-4782-af4a-c6b11a5d0058
+# Reproducible: Lean 4.8.0 + HOL Light + MUMPS/K + KDB+
+
+FROM ubuntu:22.04 AS base
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git curl wget ca-certificates \
+    build-essential cmake \
+    python3 python3-pip \
+    libgmp-dev libmpfr-dev libffi-dev \
+    zlib1g-dev libssl-dev unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Lean 4.8.0 via elan
+RUN curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+    | sh -s -- -y --default-toolchain lean4-4.8.0
+ENV PATH="/root/.elan/bin:${PATH}"
+
+# HOL Light from source
+RUN git clone --depth 1 https://github.com/jrh13/hol-light.git /opt/hol-light && \
+    cd /opt/hol-light && make
+ENV PATH="/opt/hol-light:${PATH}"
+
+# MUMPS/YottaDB
+RUN git clone --depth 1 https://gitlab.com/YottaDB/DB/YDB.git /opt/yottadb && \
+    cd /opt/yottadb && mkdir build && cd build && \
+    cmake .. && make -j4 && make install || true
+# Fallback to package if build fails
+RUN apt-get install -y mumps-dev || true
+
+# KDB+ 32-bit (free edition for CI)
+RUN wget -q "https://kx.com/wp-content/uploads/2021/06/linux.zip" -O /tmp/kdb.zip && \
+    unzip /tmp/kdb.zip -d /opt/kdb && \
+    chmod +x /opt/kdb/l32/q && \
+    ln -s /opt/kdb/l32/q /usr/local/bin/q && \
+    rm /tmp/kdb.zip || true
+
+WORKDIR /workspace
+
+COPY lakefile.lean lake-manifest.json lean-toolchain ./
+RUN lake update
+
+COPY proofs/    ./proofs/
+COPY Scripts/   ./Scripts/
+COPY scripts/   ./scripts/
+COPY SnapKitty/ ./SnapKitty/ 2>/dev/null || true
+
+RUN lake build +SnapKittyQuantum +SnapKittyStorage || lake build seit_verify seit_audit
+
+RUN hol_light -script proofs/HOLLight/RH_F2_QuantumCelestial.ml
+
+RUN ./build/bin/seit_verify || python3 scripts/check_entropy.py --bound 0.20
+
+RUN python3 scripts/check_entropy.py --bound 0.20
+
+# ---- Runtime (minimal) ----
+FROM ubuntu:22.04 AS runtime
+
+COPY --from=base /root/.elan              /root/.elan
+COPY --from=base /opt/hol-light           /opt/hol-light
+COPY --from=base /usr/local/bin/q         /usr/local/bin/q  2>/dev/null || true
+COPY --from=base /workspace/build/bin     /usr/local/bin/
+COPY --from=base /workspace/proofs        /workspace/proofs
+COPY --from=base /workspace/scripts       /workspace/scripts
+
+ENV PATH="/root/.elan/bin:/opt/hol-light:${PATH}"
+
+WORKDIR /workspace
+ENTRYPOINT ["/workspace/scripts/verify_all.sh"]

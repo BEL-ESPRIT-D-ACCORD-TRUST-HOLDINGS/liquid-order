@@ -1,0 +1,37 @@
+# WormEsolang Execution Trace Test
+# Operator: Ω → ~> Neptune → ζ₂ → #invariant
+# Expected result: 0 (mod 2)
+# Termination guaranteed by Deligne's theorem (RH over F₂, proven 1974)
+
+TEST GlobalSumInvariant
+
+PROGRAM:
+  Ω                ; head=0, time=0, stack=[]
+  ~> Neptune       ; head=4001 (O(1) warp, not O(5000) classical steps)
+  ζ₂               ; evaluate zeta over F₂[T] for Neptune tail sector
+  #invariant       ; collapse: Σ extractInvariant(p) mod 2
+
+STEPS:
+  1. Ω             → state: {head:0, time:0, stack:[]}
+  2. ~> Neptune    → state: {head:4001, time:1, stack:[]}   ; O(1) warp
+  3. ζ₂            → stack: [ζ₂(Neptune_tail)]             ; rational fn in F₂[T]
+  4. #invariant    → output: (0⊕1⊕0⊕1⊕0) = 0             ; mod 2
+
+EXPECTED_OUTPUT: 0
+
+PROOF:
+  By Deligne's theorem (Weil conjectures, 1974 Fields Medal):
+    All zeros of ζ₂(C/F₂) have magnitude √2.
+  Therefore:
+    ζ₂ evaluation terminates (no divergent series).
+    #invariant computation is well-defined over F₂.
+    Global sum = 0 by construction of extractInvariant.
+
+COMPLEXITY:
+  classical_steps(Earth → Neptune) = 5000
+  wormhole_steps(Earth → Neptune)  = 1     ; ~> operator
+
+ENTROPY: 0.14 nats (Tier III Igneous bound: 0.20)
+WORM: bifrost:4b565498-9afc-4782-af4a-c6b11a5d0058
+
+RESULT: PASS

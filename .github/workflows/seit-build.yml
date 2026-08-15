@@ -1,0 +1,148 @@
+name: SEIT Certified Build
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0'   # Weekly Tier III audit
+
+env:
+  LEAN_VERSION:    "4.8.0"
+  MATHLIB_REV:     "4.8.0"
+  SEIT_TIER:       "Tier III Igneous"
+  WORM_CHAIN:      "bifrost:4b565498-9afc-4782-af4a-c6b11a5d0058"
+  ENTROPY_BOUND:   "0.20"
+
+jobs:
+  build-lean4:
+    name: Build Lean 4 (Mathlib + SnapKitty)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: ghcr.io/leanprover/lean4:4.8.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            .lake/packages
+            ~/.elan
+          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json') }}
+
+      - name: Install system deps
+        run: apt-get update && apt-get install -y git curl python3 python3-pip
+
+      - name: Build workspace
+        run: |
+          lake update
+          lake build +SnapKitty
+
+      - name: Run SEIT verification
+        run: |
+          lake build seit_verify
+          ./build/bin/seit_verify
+
+      - name: Check entropy bound
+        run: python3 scripts/check_entropy.py --bound 0.20
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lean4-build
+          path: |
+            build/bin/seit_verify
+            build/bin/seit_audit
+            .lake/build/**/*.olean
+
+  build-hol-light:
+    name: Build HOL Light (Zero-Sorry Verification)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: hol-light/hol-light:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify HOL Light proofs
+        run: hol_light -script proofs/HOLLight/RH_F2_QuantumCelestial.ml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hol-light-proofs
+          path: proofs/HOLLight/RH_F2_QuantumCelestial.ml
+
+  build-docker:
+    name: Build Reproducible Docker Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -f Dockerfile.build -t snapkitty/seit:${{ github.sha }} .
+
+      - name: Run container verification
+        run: docker run --rm snapkitty/seit:${{ github.sha }} /scripts/verify_all.sh
+
+      - name: Push to registry (main only)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+          docker push snapkitty/seit:${{ github.sha }}
+          docker tag snapkitty/seit:${{ github.sha }} snapkitty/seit:latest
+          docker push snapkitty/seit:latest
+
+  worm-commit:
+    name: Commit to Bifrost WORM Chain
+    runs-on: ubuntu-latest
+    needs: [build-lean4, build-hol-light, build-docker]
+    timeout-minutes: 15
+    if: github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Compute artifact hashes
+        run: |
+          find lean4-build -type f | sort | xargs sha256sum > hashes.txt
+          find hol-light-proofs -type f    | xargs sha256sum >> hashes.txt
+          cat hashes.txt
+
+      - name: Commit to Bifrost WORM
+        env:
+          BIFROST_PRIVATE_KEY: ${{ secrets.BIFROST_PRIVATE_KEY }}
+          BIFROST_ENDPOINT:    ${{ secrets.BIFROST_ENDPOINT }}
+        run: |
+          python3 scripts/worm_commit.py \
+            --chain "$WORM_CHAIN" \
+            --artifacts hashes.txt \
+            --tier "$SEIT_TIER" \
+            --entropy "$ENTROPY_BOUND" \
+            --hash "$(sha256sum hashes.txt | cut -d' ' -f1)"
+
+      - name: Verify WORM commit
+        run: |
+          python3 scripts/worm_verify.py \
+            --chain "$WORM_CHAIN" \
+            --expected-hash "$(sha256sum hashes.txt | cut -d' ' -f1)"
+
+  audit-report:
+    name: Generate SEIT Audit Report
+    runs-on: ubuntu-latest
+    needs: [worm-commit]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate report
+        run: |
+          python3 scripts/generate_audit.py \
+            --worm-chain "$WORM_CHAIN" \
+            --output "audit_report_${{ github.run_id }}.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: seit-audit-report
+          path: audit_report_*.json

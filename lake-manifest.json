@@ -1,0 +1,43 @@
+{
+  "packagesDir": ".lake/packages",
+  "packages": [
+    {
+      "name": "mathlib",
+      "repo": "https://github.com/leanprover-community/mathlib4",
+      "rev": "4.8.0",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "4.8.0",
+      "inherited": false,
+      "configFile": "lakefile.lean"
+    },
+    {
+      "name": "std",
+      "repo": "https://github.com/leanprover/lean4",
+      "rev": "v4.8.0",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "v4.8.0",
+      "inherited": false,
+      "configFile": "lakefile.lean"
+    },
+    {
+      "name": "batteries",
+      "repo": "https://github.com/leanprover-community/batteries",
+      "rev": "main",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": false,
+      "configFile": "lakefile.lean"
+    }
+  ],
+  "resolved": {
+    "mathlib":   "4.8.0",
+    "std":       "v4.8.0",
+    "batteries": "main"
+  },
+  "seit": {
+    "certification": "Tier III Igneous",
+    "worm_hash":     "bifrost:4b565498-9afc-4782-af4a-c6b11a5d0058",
+    "entropy":       0.20,
+    "timestamp":     "2026-08-15T00:00:00Z"
+  }
+}
