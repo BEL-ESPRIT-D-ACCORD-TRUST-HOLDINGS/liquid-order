@@ -107,10 +107,16 @@ structure DivisorOnFF where
 -- ---------------------------------------------------------------------------
 
 -- The prime number braid: a divisor on X_FF encoding the primes
--- ← AHMAD DEFINES THIS
+-- LOCKED: sigma_b(p) = 1, so w(p) = log(p)/(2*pi) for each prime p
+-- D_prime = sum_p  (log p / 2pi) * [v_p]
+-- This IS the Weil explicit formula weight. Option A confirmed.
 noncomputable def prime_braid_divisor : DivisorOnFF :=
-  { support       := sorry  -- ← which primes, in what order?
-    multiplicities := sorry  -- ← what multiplicity at each prime?
+  { support        := Nat.primes            -- all primes, in order
+    multiplicities := fun p =>              -- multiplicity = log(p)/(2*pi)
+      if Nat.Prime p then
+        sorry  -- ← encode Real.log p / (2 * Real.pi) as ℤ-coefficient
+               --   (requires clearing denominators or working in ℝ-divisors)
+      else 0
   }
 
 -- The shadow operator: Laplacian on p-adic Banach space

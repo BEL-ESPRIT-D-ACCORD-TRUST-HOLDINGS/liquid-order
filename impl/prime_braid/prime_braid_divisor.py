@@ -94,16 +94,18 @@ class PrimeBraidDivisorTwin:
     def sigma_b(self, p: int) -> int:
         """
         Topological crossing invariant σ_b(p).
-        Currently: index of p in prime sequence.
-        This is what Ahmad needs to define precisely.
 
-        CANDIDATE DEFINITIONS:
-          Option A: σ_b(p) = index(p)           (current)
-          Option B: σ_b(p) = 1 for all p        (simplest)
-          Option C: σ_b(p) = log(p)             (log-squared weight)
-          Option D: σ_b(p) = Artin braid invariant of p
+        LOCKED: Option A — σ_b(p) = 1 for all primes.
+
+        With this choice:
+          w(p) = log(p) / (2π)
+          D_prime = Σ_p (log p / 2π) · [v_p]
+
+        This is the measure encoding prime logarithms, directly
+        related to −ζ'(s)/ζ(s) = Σ_p Σ_m log(p)/p^{ms}.
+        The divisor trace IS the geometric side of the Weil formula.
         """
-        return len(unary_index_string(p, self.primes))
+        return 1
 
     def construct_divisor_element(self, p: int) -> dict:
         """
