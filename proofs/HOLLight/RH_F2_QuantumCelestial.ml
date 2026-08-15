@@ -73,7 +73,23 @@ let quantum_fft_step = new_definition
                         Cx(&(dimindex(:N)))))`;;
 
 (* -------------------------------------------------------------------------- *)
-(* Axioms (Weil-Deligne, functional equation, DMZ)                           *)
+(* Axioms — TWO DISTINCT CATEGORIES                                          *)
+(*                                                                           *)
+(* PROVEN AXIOMS (admissible to state as axioms — independently proved):    *)
+(*   weil_deligne_theorem    — Deligne 1974, Fields Medal 1978               *)
+(*   functional_equation     — classical, proved                             *)
+(*   zeta_analytic_continuation — classical, proved                         *)
+(*                                                                           *)
+(* CONJECTURAL AXIOMS (the bridge — NOT proved; active research programs):  *)
+(*   dmz_decomposition       — DMZ proved for Jacobi forms, NOT for ζ(s)    *)
+(*   polar_singularities_only — conjectural for ζ(s) in this context         *)
+(*   f2_sign_collapse         — conjectural algebraic reduction              *)
+(*   critical_line_equivalence — THIS IS WHAT RH OVER ℂ SAYS               *)
+(*                               Stating it as axiom = assuming the answer  *)
+(*                                                                           *)
+(* The main theorem riemann_hypothesis_f2 is PROVED relative to these       *)
+(* axioms. It is NOT a proof of RH over ℂ. The conjectural axioms must be   *)
+(* discharged to obtain that result. None of them are currently discharged. *)
 (* -------------------------------------------------------------------------- *)
 
 let weil_deligne_theorem = new_axiom
@@ -87,18 +103,32 @@ let zeta_analytic_continuation = new_axiom
 let functional_equation = new_axiom
   `!s. completed_zeta s = completed_zeta (Cx(&1) - s)`;;
 
+(* CONJECTURAL — DMZ proved for Jacobi forms, not established for ζ(s) *)
 let dmz_decomposition = new_axiom
   `!s. zeta_C s = zeta_polar s + zeta_finite s`;;
 
+(* CONJECTURAL — requires DMZ for ζ(s) to hold *)
 let polar_singularities_only = new_axiom
   `!s. ~(s = Cx(&0)) /\ ~(s = Cx(&1))
        ==> zeta_polar s = Cx(&0)`;;
 
+(* CONJECTURAL — algebraic reduction map has no known geometric target *)
 let f2_sign_collapse = new_axiom
   `!z. f2_reduction z = f2_reduction (--z)`;;
 
+(* CONJECTURAL — this IS RH over ℂ stated as axiom; it is what must be PROVED *)
+(* Encoding it as an axiom does not prove it; it assumes it *)
 let critical_line_equivalence = new_axiom
   `!s. norm s = sqrt(&2) <=> Re s = &1 / &2`;;
+
+(* CONJECTURAL — no variety X/F₂ with this property is known *)
+let f2_reduction_preserves_zeros = new_axiom
+  `!s. ~(zeta_finite s = Cx(&0))
+       ==> ~(frobenius_eigenvalue s = Cx(&0))`;;
+
+(* CONJECTURAL — follows from conjectural bridge, not from Deligne alone *)
+let frobenius_magnitude_sqrt2 = new_axiom
+  `!s. ~(frobenius_eigenvalue s = Cx(&0)) ==> norm s = sqrt(&2)`;;
 
 let shor_period_finding = new_axiom
   `!a N. coprime a N
@@ -193,10 +223,21 @@ let tape_mumps_k_consistency = prove
 (* Proof status                                                               *)
 (* -------------------------------------------------------------------------- *)
 
-(* riemann_hypothesis_f2:    PROVED (modulo axioms: weil_deligne,            *)
-(*                            f2_reduction_preserves_zeros,                  *)
-(*                            frobenius_magnitude_sqrt2,                     *)
-(*                            critical_line_equivalence)                     *)
-(* quantum_celestial_speedup: AXIOM (pending complexity formalization)       *)
-(* tape_mumps_k_consistency:  PROVED (modulo planetary_tape_spec,            *)
-(*                             mumps_k_correctness)                          *)
+(* -------------------------------------------------------------------------- *)
+(* Proof status — honest annotation                                          *)
+(*                                                                           *)
+(* riemann_hypothesis_f2:                                                    *)
+(*   PROVED relative to axioms.                                              *)
+(*   PROVEN axioms used: weil_deligne_theorem (Deligne 1974)                 *)
+(*   CONJECTURAL axioms used: dmz_decomposition, polar_singularities_only,   *)
+(*     f2_sign_collapse, critical_line_equivalence,                          *)
+(*     f2_reduction_preserves_zeros, frobenius_magnitude_sqrt2               *)
+(*   STATUS: Conditional. RH over ℂ is NOT proved here.                      *)
+(*   The conjectural axioms constitute the open Hilbert-Pólya / F₁ program.  *)
+(*                                                                           *)
+(* quantum_celestial_speedup:                                                *)
+(*   AXIOM — BQP\P separation is open (requires P≠BQP)                      *)
+(*                                                                           *)
+(* tape_mumps_k_consistency:                                                 *)
+(*   PROVED relative to planetary_tape_spec + mumps_k_correctness axioms    *)
+(* -------------------------------------------------------------------------- *)
