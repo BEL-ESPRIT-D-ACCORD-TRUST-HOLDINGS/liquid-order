@@ -65,6 +65,9 @@ library
     LiquidOrder.QuantumLangB.BlackHoleASM.IR
     LiquidOrder.QuantumLangB.BlackHoleASM.Opcodes
 
+    -- Spectral contract (Liquid Haskell source of truth)
+    LiquidOrder.QuantumLangB.SpectralContract
+
     -- Haiku Learning Kernel (Curry/Haskell spec)
     LiquidOrder.HaikuKernel.WorldState
     LiquidOrder.HaikuKernel.Pipeline
