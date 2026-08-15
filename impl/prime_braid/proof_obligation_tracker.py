@@ -291,7 +291,7 @@ if __name__ == "__main__":
     validator.submit_conditional("O3", ["diagonal_operator_self_adjoint_criterion"])
 
     # O4a-O4c: numerical evidence only — NOT promoted to PROVED
-    validator.submit_numerical_evidence("O4a", gap=3.7, tol=0.01)
+    validator.submit_conditional("O4a", ["H_shadow_concrete_self_adjoint_proved", "spectralLog_real"])
     validator.submit_numerical_evidence("O4b", gap=3.7, tol=0.01)
     # O4c, O5a-O5d: all MISSING (no candidate yet)
     # (no submit call needed — default is MISSING)
